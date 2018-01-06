@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+    <head>
+        <title>
+        </title>
+    </head>
+    <body style="text-align:center; ">
+        <br>
+        <br>
+        <br>
+        <h2>Enter URL for Airlines List JSON File</h2>
+        <form>
+        <input type="text" name="jsonurl">
+        <br>
+        <button name = "button" value = "OK" type = "button" onclick="start(this.form)">Submit query</button>
+        </form>
+        <script>
+                                                                                                                            
+            function makeoutputhtml(myjsonstring){
+                 console.log(typeof(myjsonstring));
+                console.log('hi');
+                var originaljson= JSON.parse(myjsonstring);
+                console.log(originaljson);
+                if(originaljson.Mainline.Table.Row==null){
+                    alert("JSON has no airline companies");
+                }
+                else{
+             output_text="<html><head><title>US Airlines Listings</title></head><body>";
+             headings = originaljson.Mainline.Table.Header.Data;
+             output_text+="<table width='100%' border='1'><tr>";
+            
+                for(i=0;i<headings.length;i++){
+                    head=headings[i];
+                    output_text+="<th>"+head+"</th>";
+                }
+            output_text+="</tr>";
+            //output_text+= "<tr>"
+            airlines = originaljson.Mainline.Table.Row;
+            console.log(airlines[0].Airline);
+            console.log(airlines[0].Homepage);
+            hubsdata=airlines[0].Hubs;
+            console.log(hubsdata.Hub[0]);
+            for(i=0;i<airlines.length;i++){
+                output_text+= "<tr><td>"+airlines[i].Airline+"</td>"+"<td>"+airlines[i].IATA+"</td>";
+                hubsdata=airlines[i].Hubs;
+                output_text+= "<td><ul>"
+                for (j=0;j<hubsdata.Hub.length;j++){
+                    output_text+= "<li>"+hubsdata.Hub[j]+"</li>";
+                    //output_text+= "<td>"+hubsdata.Hub[j]+"</td>"+"</tr>";
+                }
+                output_text+= "</ul></td>"
+                output_text+= "<td>"+airlines[i].Notes+"</td>"
+                output_text+= "<td><a href='"+airlines[i].HomePage+"'>"+airlines[i].HomePage+"</a></td>";
+                output_text+= "<td><img src='"+airlines[i].Plane+"' height=150 width=250>"+"</td></tr>"                
+            }
+               console.log(output_text);
+                }
+            }
+        
+            function start(why){
+                console.log(loc);
+                var loc= why.jsonurl.value;
+                if(''==loc){
+                    alert("Please input the json file name");
+                }
+                
+                function getData(url){
+                    request= new XMLHttpRequest();
+                    request.open("GET",url,false);
+                    try{
+                        request.send();
+                        myData= request.responseText;
+                        if(request.status==404){
+                            alert("File doesn't exist.");
+                        }
+                    }
+                    catch(err){
+                        alert(err.message);
+                        
+                }
+                    return myData;
+                }
+                myurl=getData(loc);
+                if(null!=myurl){
+                    console.log(typeof(myurl));
+                    console.log('myurl');
+                    makeoutputhtml(myurl);
+                    if (output_text==null){
+                        alert("File doesn't have Airline Companies");
+                    }
+                    else{
+                        newWindow= window.open("","US Airlines Listings", "scrollbars=yes");
+                        newWindow.document.write(output_text);
+                    }
+                    newWindow.document.close();
+                }
+               
+                
+            }
+        </script>
+        <noscript></noscript>
+    </body>
+</html>
