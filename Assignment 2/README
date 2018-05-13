@@ -1,0 +1,1 @@
+  A HTML form where the user can enter a URL as input and get information about different airlines in the form of a table. An xmlhttp request is sent through the form and the resulting JSON object is parsed and shown in the form of a table.
